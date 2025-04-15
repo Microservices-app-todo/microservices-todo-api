@@ -1,6 +1,7 @@
 name: Build and Push Docker Image to ACR
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - develop  # Puedes cambiar esto a la rama que prefieras
