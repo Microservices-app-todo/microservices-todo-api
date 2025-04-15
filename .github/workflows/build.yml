@@ -1,10 +1,8 @@
 name: Build and Push Docker Image to ACR
 
 on:
-  push:
-    branches:
-      - develop  # Puedes cambiar esto a la rama que prefieras
-
+  workflow_dispatch:
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,18 +33,3 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.ACR_NAME }}.azurecr.io/todos-api:latest
-
-    - name: Log in to Azure
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-    - name: Update Azure Container App
-      run: |
-        az containerapp update \
-          --name ${{ secrets.CONTAINER_APP_NAME }} \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} \
-          --image ${{ secrets.ACR_NAME }}.azurecr.io/todos-api:latest
