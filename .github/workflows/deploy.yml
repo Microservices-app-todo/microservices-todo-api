@@ -39,14 +39,14 @@ jobs:
     - name: Log in to Azure
       uses: azure/login@v1
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        creds: ${{ secrets.CREDS }}
+        auth-type: SERVICE_PRINCIPAL
 
-    - name: Update Azure Container App
+    - name: Force new revision of Azure Container App
       run: |
         az containerapp update \
           --name ${{ secrets.CONTAINER_APP_NAME }} \
           --resource-group ${{ secrets.RESOURCE_GROUP }} \
-          --image ${{ secrets.ACR_NAME }}.azurecr.io/todos-api:latest
+          --image ${{ secrets.ACR_NAME }}.azurecr.io/todos-api:latest \
+          --set-env-vars GITHUB_RUN_ID=${{ github.run_id }} \
+          --revision-suffix rev-${{ github.run_number }} \
