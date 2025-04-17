@@ -3,7 +3,7 @@ const express = require('express')
 const bodyParser = require("body-parser")
 const jwt = require('express-jwt')
 
-const ZIPKIN_URL = process.env.ZIPKIN_URL || 'http://127.0.0.1:9411/api/v2/spans';
+const ZIPKIN_URL = process.env.ZIPKIN_URL || 'http://zipkin:80/api/v2/spans';
 const {Tracer, 
   BatchRecorder,
   jsonEncoder: {JSON_V2}} = require('zipkin');
@@ -12,8 +12,6 @@ const {HttpLogger} = require('zipkin-transport-http');
 const zipkinMiddleware = require('zipkin-instrumentation-express').expressMiddleware;
 
 const logChannel = process.env.REDIS_CHANNEL || 'log_channel';
-console.log(process.env.REDIS_HOST);
-console.log(process.env.REDIS_PORT);
 const redisClient = require("redis").createClient({
   host: process.env.REDIS_HOST || 'localhost',
   port: process.env.REDIS_PORT || 6379,
