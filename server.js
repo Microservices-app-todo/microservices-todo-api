@@ -16,7 +16,7 @@ const zipkinMiddleware = require('zipkin-instrumentation-express').expressMiddle
 
 const logChannel = process.env.REDIS_CHANNEL || 'log_channel';
 const redisHost = process.env.REDIS_HOST || 'localhost';
-const redisPort = process.env.REDIS_PORT || 6379;
+const redisPort =  6379;
 
 const redis = require('redis');
 const redisClient = redis.createClient({
