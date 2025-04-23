@@ -78,6 +78,33 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
+// Middleware de logging
+app.use((req, res, next) => {
+  const logMessage = `Request to ${req.originalUrl} at ${new Date().toISOString()}`;
+  redisClient.publish(logChannel, logMessage, (err, response) => {
+    if (err) {
+      console.error('❌ Error al guardar log en Redis:', err);
+    } else {
+      console.log('✅ Log guardado en Redis:', response);
+    }
+  });
+  next();
+});
+
+// Middleware para capturar y almacenar errores en Redis
+app.use((err, req, res, next) => {
+  const errorMessage = `Error at ${new Date().toISOString()} for ${req.originalUrl}: ${err.message}`;
+  redisClient.publish(logChannel, errorMessage, (err, response) => {
+    if (err) {
+      console.error('❌ Error al guardar error en Redis:', err);
+    } else {
+      console.log('✅ Error guardado en Redis:', response);
+    }
+  });
+  next(err);
+});
+
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
