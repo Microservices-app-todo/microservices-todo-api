@@ -33,3 +33,21 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.ACR_NAME }}.azurecr.io/todos-api:latest
+
+    - name: Log in to Azure
+      if: github.event_name == 'push'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.CREDS }}
+        auth-type: SERVICE_PRINCIPAL
+
+    - name: Force new revision of Azure Container App
+      if: github.event_name == 'push'
+      run: |
+        az containerapp update \
+          --name ${{ secrets.CONTAINER_APP_NAME }} \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} \
+          --image ${{ secrets.ACR_NAME }}.azurecr.io/todos-api:latest \
+          --set-env-vars GITHUB_RUN_ID=${{ github.run_id }} \
+          --revision-suffix rev-${{ github.run_number }} \
+
